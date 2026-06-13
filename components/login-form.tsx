@@ -4,13 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { assets } from "@/app/constants/assets";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "./ui/input-group";
-import { Key, SearchIcon, User } from "lucide-react";
 
 export function LoginForm({
   className,
