@@ -1,12 +1,23 @@
-"use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/server";
 
-export default function Home() {
-  const router = useRouter();
+export default async function Home() {
+  const supabase = await createClient();
+
+  const { data: users } = await supabase.from("users").select();
+
   return (
     <>
-      <Button onClick={() => router.push("/login")}>Login</Button>
+      <Button asChild>
+        <Link href="/login">Login</Link>
+      </Button>
+      {/* This is where the fetched data from the 'users' table is displayed */}
+      <div>
+        {users?.map((user) => (
+          <p key={user.id}>{JSON.stringify(user)}</p>
+        ))}
+      </div>
     </>
   );
 }
