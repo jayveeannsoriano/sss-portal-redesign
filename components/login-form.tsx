@@ -67,12 +67,7 @@ export function LoginForm({
               </Alert> */}
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  {...register("username")}
-                />
+                <Input id="username" type="text" {...register("username")} />
                 {errors.username && (
                   <p className="text-xs text-destructive mt-1">
                     {errors.username.message}
@@ -92,7 +87,6 @@ export function LoginForm({
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
                   {...register("password")}
                 />
                 {errors.password && (

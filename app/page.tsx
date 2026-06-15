@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/server";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
   const supabase = await createClient();
