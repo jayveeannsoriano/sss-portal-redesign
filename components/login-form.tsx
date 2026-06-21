@@ -14,6 +14,9 @@ import { assets } from "@/app/constants/assets";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { login } from "@/app/(auth)/action/action";
+import { Alert } from "./ui/alert";
+import { PasswordInput } from "./ui/password-input";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Please enter your username"),
@@ -35,8 +38,11 @@ export function LoginForm({
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    // TODO: handle login logic
     console.log(data);
+    const result = await login(data.username, data.password);
+    if (result?.error) {
+      form.setError("root", { message: result.error });
+    }
   };
 
   return (
@@ -47,7 +53,7 @@ export function LoginForm({
             <img
               src={assets.loginBanner}
               alt="sss-login-banner"
-              className="inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
           <form
@@ -66,6 +72,11 @@ export function LoginForm({
                   Please enter your login details
                 </p>
               </div>
+              {form.formState.errors.root && (
+                <Alert variant="destructive" className="text-xs">
+                  {form.formState.errors.root.message}
+                </Alert>
+              )}
               <Controller
                 name="username"
                 control={form.control}
@@ -77,6 +88,7 @@ export function LoginForm({
                       id="username"
                       type="text"
                       aria-invalid={fieldState.invalid}
+                      placeholder="juan.delacruz"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -90,11 +102,11 @@ export function LoginForm({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
+                    <PasswordInput
                       {...field}
                       id="password"
-                      type="password"
                       aria-invalid={fieldState.invalid}
+                      placeholder="••••••••"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
