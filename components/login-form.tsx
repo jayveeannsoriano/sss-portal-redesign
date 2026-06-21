@@ -3,17 +3,21 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { assets } from "@/app/constants/assets";
-import { Alert } from "./ui/alert";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "Please enter your username"),
+  password: z.string().min(1, "Please enter your password"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -22,12 +26,12 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -47,7 +51,7 @@ export function LoginForm({
             />
           </div>
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="p-10 md:p-12 flex flex-col justify-center"
           >
             <FieldGroup>
@@ -62,46 +66,49 @@ export function LoginForm({
                   Please enter your login details
                 </p>
               </div>
-              {/* <Alert variant={"destructive"} className="text-xs">
-                Invalid username or password. Please try again.
-              </Alert> */}
-              <Field>
-                <FieldLabel htmlFor="username">Username</FieldLabel>
-                <Input id="username" type="text" {...register("username")} />
-                {errors.username && (
-                  <p className="text-xs text-destructive mt-1">
-                    {errors.username.message}
-                  </p>
+              <Controller
+                name="username"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="username">Username</FieldLabel>
+                    <Input
+                      {...field}
+                      id="username"
+                      type="text"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-xs underline-offset-4 text-primary hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-xs text-destructive mt-1">
-                    {errors.password.message}
-                  </p>
+              ></Controller>
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
-              </Field>
+              ></Controller>
               <Field>
                 <Button
                   type="submit"
                   className="cursor-pointer"
-                  disabled={isSubmitting}
+                  disabled={form.formState.isSubmitting}
                 >
-                  {isSubmitting ? "Logging in..." : "Login"}
+                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
                 </Button>
               </Field>
               <div className="grid gap-2 mt-6">
